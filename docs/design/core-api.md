@@ -22,6 +22,9 @@ Methods may return assertion types directly only when changing to a different as
 - Public entry points and cross-cutting assertion methods should expose optional `because` and
   `becauseArgs` parameters in the same order.
 - Deferred execution overloads (`Func<T>`) should mirror direct value overloads and preserve context.
-- Generic constraints should be used when they improve compile-time guidance (`IsSameAs` requires
-  reference types).
+- Generic constraints should be used when they improve compile-time guidance, but only where C#
+  allows them: a method cannot narrow the constraint of a type parameter already bound by its
+  declaring generic type (for example, `ObjectAssertions<TActual>.IsSameAs` cannot require
+  `TActual : class`, since `TActual` is fixed at the class level and shared with value-type
+  assertions like `IsTrue`).
 - Nullable annotations should always reflect the intended contract for null acceptance and null return.

@@ -52,7 +52,7 @@ public class ObjectAssertions<TActual>(TActual actual, IAssertionContext context
         return new AndConstraint<ObjectAssertions<TActual>>(this);
     }
 
-    public AndConstraint<ObjectAssertions<TActual>> IsSameAs(TActual instance) where TActual : class
+    public AndConstraint<ObjectAssertions<TActual>> IsSameAs(TActual instance)
     {
         if (!ReferenceEquals(Actual, instance))
         {
