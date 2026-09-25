@@ -1,5 +1,8 @@
 # Core API design notes
 
+> See also: [architecture](../architecture.md), [API reference](../api-reference.md), and
+> [known flaws and quick enhancements](../flaws-and-enhancements.md).
+
 ## Naming conventions
 
 Expectantly follows a predictable fluent naming pattern:
