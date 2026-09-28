@@ -21,7 +21,7 @@ The .NET market has a clear opening in 2026:
 | xUnit / NUnit / MSTest built-ins | Static `Assert.*` | Framework-bound; limited extensibility |
 
 **Recommended positioning:** _a synchronous-first, MIT-licensed-forever, trimming/AOT-safe library
-with compile-time expression capture, Truth-quality failure messages, and soft assertions built
+with compile-time expression capture, human-readable one-sentence failure messages, and soft assertions built
 into the core._ No current library occupies all of that at once.
 
 Expectantly is ~150 lines of library code at `0.x` with a clean naming convention
@@ -50,6 +50,9 @@ The single most important property. Converging best practice:
   keys and runtime values, padded to a common width; multi-line values move below their key.
   Rust 1.73 changed `assert_eq!` to the same shape (`left:` / `right:` right-aligned). The
   rationale: mixing prose and values makes it harder to spot which is actual and which is expected.
+  The opposite school (Shouldly, aweXpect) writes one readable sentence:
+  `Expected that result is False, because …, but it was True`. **Expectantly follows the sentence
+  school** (see D7): restating expected and actual on separate lines adds length, not clarity.
 - **Diffs chosen by shape.** Strings: show the first differing index with a caret and trim common
   prefix/suffix (Truth keeps 20 chars of context, only trims when ≥60 chars would be hidden, never
   splits a surrogate pair). Sequences: first failing index. Dictionaries: differing entries.
@@ -286,23 +289,26 @@ using (Expect.Scope())
 Use `AsyncLocal` and support nesting (the inner scope flushes into the outer one). This works the
 same for sync and async code, and is built on D2, so third-party assertions participate for free.
 
-### D7. Message model: facts, plus a formatter registry
+### D7. Message model: one readable sentence, plus a formatter registry
 
-Target output:
+A failure reads as one sentence:
+`Expected <subject> <expectation> [because <reason>], but found <actual>[, which <difference>].`
 
 ```text
-Expected order.Total to be 43 because tax is included.
-    expected: 43
-     but was: 42
+Expected order.Total to be 43 because tax is included, but found 42.
 
-Expected user.Name to be "Victoria".
-    expected: "Victoria"
-     but was: "Vic toria"
-                 ↑ first difference at index 3
+Expected cart.Items to contain exactly [1, 2, 3] in order, but found [1, 2, 4], which is missing 3 and has 4 extra.
+
+Expected user.Name to be "Victoria", but found "Vic toria", which differs at index 3:
+    "Vic toria"
+        ↑
 ```
 
-- A `Failure` is a header plus a list of `Fact(key, value)`. The renderer aligns keys, and
-  moves multi-line values below their key.
+- Each value appears once, inside the sentence. There are no `expected:` / `but was:` lines.
+  Extra lines are only for detail a sentence cannot hold: a pointer into a string, a list of
+  equivalency differences, or the failures in a soft scope.
+- A `Failure` is composed from an expectation phrase, the found value, an optional `which` clause,
+  optional detail lines, the reason and any clues.
 - An `IValueFormatter` registry covers primitives, quoted and escaped strings, collections with a
   truncation marker, dictionaries, records, `Type`, and `DateTime` with kind. It can be configured
   per scope (`using (Expect.Configure(o => o.MaxItems = 20))`).
@@ -310,7 +316,7 @@ Expected user.Name to be "Victoria".
   prefix/suffix trimming at the Truth thresholds, surrogate-safe), `SequenceDiff`, and
   `SetDiff` (missing/unexpected).
 - Look-alike detection: when two values format identically but are not equal, the message says so
-  and adds type facts.
+  and names both types in the `which` clause.
 
 ### D8. Equality tiers named for what they do
 
@@ -327,12 +333,12 @@ Expected user.Name to be "Victoria".
 
 ### Phase 0: Foundations (breaking; do first)
 
-1. `ExpectationFailedException`, `Failure`/`Fact`, `IFailureStrategy` (throw only for now) (G1, G12).
+1. `ExpectationFailedException`, `Failure`, `IFailureStrategy` (throw only for now) (G1, G12).
 2. Entry point with `[CallerArgumentExpression]`; `because` moved onto the assertion methods;
    `becauseArgs` dropped (G2, G3, G9).
 3. Remove the eager `That(Func<T>)` (G4). That delegate shape is reserved for exception assertions.
 4. `EqualityComparer<T>`; `IsSameAs` → `IsSameInstanceAs` with a value-type guard (G6, G7).
-5. Value formatter and fact renderer; update every existing message (G8).
+5. Value formatter and sentence composer; update every existing message (G8).
 6. `[StackTraceHidden]` on all assertion methods (G13).
 7. **Golden-file tests for failure messages.** Every failing assertion's full message is committed
    and diffed (Verify, or a small in-house approval helper). The messages are the product, so
