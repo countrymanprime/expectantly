@@ -416,7 +416,7 @@ tests/
 benchmarks/
   Expectantly.Benchmarks/
 docs/
-  prd.md  design/  guide/
+  prd/  design/  guide/
 ```
 
 ### Build settings
