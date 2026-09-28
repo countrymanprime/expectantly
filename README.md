@@ -18,7 +18,18 @@ equality, nulls, booleans, instance identity and type checks; see the
 
 ## Install
 
-It isn't published to NuGet yet. For now, reference the project directly:
+It isn't on nuget.org yet. Preview versions are published to
+[GitHub Packages](https://github.com/countrymanprime/expectantly/packages) when a version is tagged.
+GitHub Packages needs you to sign in, even for public packages: create a personal access token with
+the `read:packages` scope, then add the feed once:
+
+```bash
+dotnet nuget add source "https://nuget.pkg.github.com/countrymanprime/index.json" \
+  --name expectantly --username <your-github-username> --password <token> --store-password-in-clear-text
+dotnet add package Expectantly --prerelease
+```
+
+Or reference the project directly:
 
 ```bash
 dotnet add reference ../path/to/src/Expectantly/Expectantly.csproj

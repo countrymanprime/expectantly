@@ -16,3 +16,4 @@ Notable architecture/technical decisions for `Expectantly`, recorded as lightwei
 | [0005](0005-write-failure-messages-as-one-sentence.md) | Write failure messages as one readable sentence | Accepted |
 | [0006](0006-narrowing-assertions-return-andwhichconstraint.md) | Narrowing assertions return `AndWhichConstraint<TSelf, TValue>` | Accepted |
 | [0007](0007-target-netstandard20-net80-and-net100.md) | Target `netstandard2.0`, `net8.0` and `net10.0` | Accepted |
+| [0008](0008-publish-previews-to-github-packages-from-version-tags.md) | Publish previews to GitHub Packages from version tags | Accepted |

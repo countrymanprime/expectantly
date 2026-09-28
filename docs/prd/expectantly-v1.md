@@ -421,7 +421,7 @@ docs/
 
 ### Build settings
 
-- `Directory.Build.props`: `LangVersion latest`, `Nullable enable`, `TreatWarningsAsErrors`, `Deterministic`, `ContinuousIntegrationBuild` in CI, SourceLink, embedded untracked sources, `.snupkg` symbols, package readme and icon.
+- `Directory.Build.props`: `LangVersion latest`, `Nullable enable`, `TreatWarningsAsErrors`, `Deterministic`, `ContinuousIntegrationBuild` in CI, SourceLink, embedded untracked sources, symbols embedded in the `.nupkg` (GitHub Packages doesn't accept `.snupkg`), package readme and icon.
 - `Directory.Packages.props` for central package versions.
 - Source-only polyfills (for example PolySharp) supply `CallerArgumentExpression`, `DoesNotReturn` and `OverloadResolutionPriority` attributes on `netstandard2.0` without a runtime dependency.
 - `Microsoft.CodeAnalysis.PublicApiAnalyzers` and `EnablePackageValidation` on every shipping project.
@@ -448,13 +448,13 @@ docs/
 | pack | Every PR | `dotnet pack`, package validation, public API check |
 | bench | Nightly on `main` | Benchmarks; fail on a regression over 10% |
 | mutation | Weekly | Stryker.NET report |
-| release | Tag `v*` | Pack, sign, publish to NuGet, create GitHub release from conventional commits |
+| release | Tag `v*` | Run the CI workflow, pack, publish previews to GitHub Packages (nuget.org from 1.0), create a GitHub release with generated notes. Signing is still open. |
 
 The existing workflow (`.github/workflows/ci.yml`, .NET 8 only, ubuntu only) is replaced in M0.
 
 ### Release policy
 
-- Pre-1.0: each milestone ships a `0.x` preview to NuGet. Breaking changes are allowed and listed in release notes.
+- Pre-1.0: each milestone ships a `0.x` preview to GitHub Packages. Breaking changes are allowed and listed in release notes.
 - 1.0 and later: semantic versioning enforced by package validation. Deprecations get `[Obsolete]` for one minor release before removal in the next major.
 - Commit messages keep the conventional-commit style already in use (`feat!:`, `fix:`, `docs:`).
 

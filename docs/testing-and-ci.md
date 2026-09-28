@@ -70,13 +70,32 @@ sets `TreatWarningsAsErrors`:
 ## CI pipeline
 
 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) runs on every push to `main` and every
-pull request targeting `main`. Both jobs check out full history, because MinVer computes the
-package version from git tags (`v*`).
+pull request targeting `main`, and the release workflow calls it before publishing. Both jobs check
+out full history, because MinVer computes the package version from git tags (`v*`).
 
 | Job | Runs on | Steps |
 | --- | --- | --- |
 | `build-test` | `ubuntu-latest` and `windows-latest` | Install the SDK from `global.json` plus the .NET 8 runtime; restore; `dotnet format --verify-no-changes` (Linux only); build Release; test on `net8.0` and `net10.0`. |
-| `pack` | `ubuntu-latest` | `dotnet pack` with package validation, then upload the `.nupkg` and `.snupkg` as the `packages` artifact. |
+| `pack` | `ubuntu-latest` | `dotnet pack`, which runs package validation. On pushes to `main` only, upload the `.nupkg` as the `packages` artifact, kept for 7 days. |
 
 Nothing runs the tests on .NET Framework yet, so the `netstandard2.0` build is compiled but not
 exercised.
+
+## Releases
+
+[`.github/workflows/release.yml`](../.github/workflows/release.yml) publishes a version when a
+`v*` tag is pushed ([ADR-0008](adr/0008-publish-previews-to-github-packages-from-version-tags.md)):
+
+```bash
+git tag v0.1.0-alpha.1
+git push origin v0.1.0-alpha.1
+```
+
+1. It runs the whole CI workflow (`build-test` and `pack`) first; nothing is published unless it passes.
+2. It packs; MinVer turns the tag into the package version (`v0.1.0-alpha.1` → `0.1.0-alpha.1`).
+3. It pushes the `.nupkg` to GitHub Packages with the workflow's own `GITHUB_TOKEN`.
+4. It creates a GitHub release for the tag, with generated notes and the `.nupkg` attached. A tag
+   with a pre-release suffix (anything after `-`) makes a pre-release.
+
+Debug symbols are embedded in the `.nupkg` (`DebugType` `embedded`), because GitHub Packages doesn't
+accept `.snupkg` symbol packages.

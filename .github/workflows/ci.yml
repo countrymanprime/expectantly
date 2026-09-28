@@ -5,6 +5,7 @@ on:
     branches: [main]
   push:
     branches: [main]
+  workflow_call: # the release workflow runs these checks before publishing
 
 permissions:
   contents: read
@@ -53,10 +54,14 @@ jobs:
         with:
           global-json-file: global.json
 
+      # Packing runs package validation, so packaging problems fail the PR, not the release.
       - name: Pack and validate
         run: dotnet pack src/Expectantly/Expectantly.csproj --configuration Release --output artifacts
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload package from main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
         with:
           name: packages
           path: artifacts/
+          retention-days: 7
