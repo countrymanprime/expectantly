@@ -11,11 +11,23 @@ public class BooleanAssertionsTests
     }
 
     [Fact]
-    public void IsTrue_WhenValueIsFalse_ThrowsInvalidOperationException()
+    public void IsTrue_WhenValueIsFalse_ThrowsExpectationFailedException()
     {
-        var ex = Assert.Throws<InvalidOperationException>(() => global::Expectantly.Expect.That(false).IsTrue());
+        var ready = false;
 
-        Assert.Contains("Expected <true> but found <False>", ex.Message);
+        var message = MessageOf(() => global::Expectantly.Expect.That(ready).IsTrue());
+
+        Assert.Equal("Expected ready to be true, but found false.", message);
+    }
+
+    [Fact]
+    public void IsTrue_WhenValueIsNotABool_NamesItsType()
+    {
+        var answer = "yes";
+
+        var message = MessageOf(() => global::Expectantly.Expect.That(answer).IsTrue());
+
+        Assert.Equal("Expected answer to be true, but found \"yes\", which is a string, not a bool.", message);
     }
 
     [Fact]
@@ -27,10 +39,22 @@ public class BooleanAssertionsTests
     }
 
     [Fact]
-    public void IsFalse_WhenValueIsTrue_ThrowsInvalidOperationException()
+    public void IsFalse_WhenValueIsTrue_ThrowsExpectationFailedException()
     {
-        var ex = Assert.Throws<InvalidOperationException>(() => global::Expectantly.Expect.That(true).IsFalse());
+        var done = true;
 
-        Assert.Contains("Expected <false> but found <True>", ex.Message);
+        var message = MessageOf(() => global::Expectantly.Expect.That(done).IsFalse());
+
+        Assert.Equal("Expected done to be false, but found true.", message);
+    }
+
+    [Fact]
+    public void IsFalse_WhenNullableValueIsNull_SaysSo()
+    {
+        bool? done = null;
+
+        var message = MessageOf(() => global::Expectantly.Expect.That(done).IsFalse());
+
+        Assert.Equal("Expected done to be false, but found null.", message);
     }
 }

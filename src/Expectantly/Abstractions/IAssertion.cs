@@ -12,7 +12,8 @@ public interface IAssertion<out TActual>
     TActual Actual { get; }
 
     /// <summary>
-    /// Gets metadata used for message formatting.
+    /// Gets the source text of the value under test, as captured by <see cref="Expect.That{T}(T, string?)"/>,
+    /// or <see langword="null"/> when it is not known. Failure messages use it to name the value.
     /// </summary>
-    IAssertionContext Context { get; }
+    string? Expression { get; }
 }

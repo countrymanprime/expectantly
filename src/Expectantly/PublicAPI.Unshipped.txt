@@ -1,0 +1,42 @@
+#nullable enable
+Expectantly.Abstractions.IAndConstraint<TSelf>
+Expectantly.Abstractions.IAndConstraint<TSelf>.And.get -> TSelf
+Expectantly.Abstractions.IAssertion<TActual>
+Expectantly.Abstractions.IAssertion<TActual>.Actual.get -> TActual
+Expectantly.Abstractions.IAssertion<TActual>.Expression.get -> string?
+Expectantly.AndConstraint<TSelf>
+Expectantly.AndConstraint<TSelf>.And.get -> TSelf
+Expectantly.AndConstraint<TSelf>.AndConstraint(TSelf and) -> void
+Expectantly.AndWhichConstraint<TSelf, TValue>
+Expectantly.AndWhichConstraint<TSelf, TValue>.And.get -> TSelf
+Expectantly.AndWhichConstraint<TSelf, TValue>.AndWhichConstraint(TSelf and, TValue which) -> void
+Expectantly.AndWhichConstraint<TSelf, TValue>.Which.get -> TValue
+Expectantly.Expect
+Expectantly.ExpectationFailedException
+Expectantly.ExpectationFailedException.ExpectationFailedException(Expectantly.Failure! failure) -> void
+Expectantly.ExpectationFailedException.Failure.get -> Expectantly.Failure!
+Expectantly.Failure
+Expectantly.Failure.Because.get -> string?
+Expectantly.Failure.Details.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Expectantly.Failure.Expectation.get -> string!
+Expectantly.Failure.Message.get -> string!
+Expectantly.Failure.Outcome.get -> string!
+Expectantly.Failure.Subject.get -> string!
+Expectantly.Failure.Which.get -> string?
+Expectantly.ObjectAssertions<TActual>
+Expectantly.ObjectAssertions<TActual>.Actual.get -> TActual
+Expectantly.ObjectAssertions<TActual>.Expression.get -> string?
+Expectantly.ObjectAssertions<TActual>.Is(TActual expected, string? because = null, string? expectedExpression = null) -> Expectantly.AndConstraint<Expectantly.ObjectAssertions<TActual>!>!
+Expectantly.ObjectAssertions<TActual>.Is(TActual expected, System.Collections.Generic.IEqualityComparer<TActual>! comparer, string? because = null, string? expectedExpression = null) -> Expectantly.AndConstraint<Expectantly.ObjectAssertions<TActual>!>!
+Expectantly.ObjectAssertions<TActual>.IsAssignableTo<TExpected>(string? because = null) -> Expectantly.AndWhichConstraint<Expectantly.ObjectAssertions<TActual>!, TExpected>!
+Expectantly.ObjectAssertions<TActual>.IsFalse(string? because = null) -> Expectantly.AndConstraint<Expectantly.ObjectAssertions<TActual>!>!
+Expectantly.ObjectAssertions<TActual>.IsNot(TActual unexpected, string? because = null, string? unexpectedExpression = null) -> Expectantly.AndConstraint<Expectantly.ObjectAssertions<TActual>!>!
+Expectantly.ObjectAssertions<TActual>.IsNot(TActual unexpected, System.Collections.Generic.IEqualityComparer<TActual>! comparer, string? because = null, string? unexpectedExpression = null) -> Expectantly.AndConstraint<Expectantly.ObjectAssertions<TActual>!>!
+Expectantly.ObjectAssertions<TActual>.IsNotNull(string? because = null) -> Expectantly.AndWhichConstraint<Expectantly.ObjectAssertions<TActual>!, TActual>!
+Expectantly.ObjectAssertions<TActual>.IsNotSameInstanceAs(TActual unexpected, string? because = null, string? unexpectedExpression = null) -> Expectantly.AndConstraint<Expectantly.ObjectAssertions<TActual>!>!
+Expectantly.ObjectAssertions<TActual>.IsNull(string? because = null) -> Expectantly.AndConstraint<Expectantly.ObjectAssertions<TActual>!>!
+Expectantly.ObjectAssertions<TActual>.IsSameInstanceAs(TActual expected, string? because = null, string? expectedExpression = null) -> Expectantly.AndConstraint<Expectantly.ObjectAssertions<TActual>!>!
+Expectantly.ObjectAssertions<TActual>.IsTrue(string? because = null) -> Expectantly.AndConstraint<Expectantly.ObjectAssertions<TActual>!>!
+Expectantly.ObjectAssertions<TActual>.ObjectAssertions(TActual actual, string? expression = null) -> void
+override Expectantly.Failure.ToString() -> string!
+static Expectantly.Expect.That<T>(T actual, string? expression = null) -> Expectantly.ObjectAssertions<T>!

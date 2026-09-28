@@ -6,22 +6,57 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+  build-test:
+    name: build-test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # MinVer reads the version from git tags
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x"
+          global-json-file: global.json # SDK used to build
+          dotnet-version: 8.0.x # runtime for the net8.0 test run
 
       - name: Restore
         run: dotnet restore Expectantly.sln
+
+      - name: Check formatting
+        if: runner.os == 'Linux'
+        run: dotnet format Expectantly.sln --verify-no-changes --no-restore
 
       - name: Build
         run: dotnet build Expectantly.sln --no-restore --configuration Release
 
       - name: Test
         run: dotnet test Expectantly.sln --no-build --configuration Release
+
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Pack and validate
+        run: dotnet pack src/Expectantly/Expectantly.csproj --configuration Release --output artifacts
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: artifacts/
