@@ -1,5 +1,8 @@
 # Core API design notes
 
+> See also: [architecture](../architecture.md), [API reference](../api-reference.md), and
+> [architecture decision records](../adr/README.md).
+
 ## Naming conventions
 
 Expectantly follows a predictable fluent naming pattern:
