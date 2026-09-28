@@ -1,6 +1,6 @@
 # 0001. Record architecture decisions as lightweight ADRs
 
-- Status: accepted
+- Status: Accepted
 - Date: 2026-09-18
 
 ## Context
@@ -13,15 +13,22 @@ as a return-type convention or a generic-constraint tradeoff need a durable, ver
 place to live next to the code, instead of being reconstructed from commit history or
 lost entirely.
 
+## Considered options
+
+1. Keep the status quo: `docs/design/*.md` describes the current API, and the reasons live in
+   commit messages.
+2. Record each decision as a lightweight ADR under `docs/adr/`, next to the design docs.
+
 ## Decision
 
-We record notable, hard-to-reverse technical decisions as lightweight ADRs under
-`docs/adr/`, one file per decision (`NNNN-slug.md`), indexed in `docs/adr/README.md`,
-using a `Status`/`Date`/`Context`/`Decision`/`Consequences` format (see
-`docs/adr/template.md`). `docs/design/*.md` keeps describing the current public API
-surface — conventions a contributor follows today — while `docs/adr/` records the
-history of *why* those conventions exist. An accepted ADR's Decision and Consequences
-are not edited after the fact; a change of mind gets a new ADR that supersedes it.
+We choose option 2. We record notable, hard-to-reverse technical decisions as
+lightweight ADRs under `docs/adr/`, one file per decision (`NNNN-slug.md`), indexed in
+`docs/adr/README.md`, using a Status, Date, Context, Considered options, Decision and
+Consequences format (see `docs/adr/template.md`).
+`docs/design/*.md` keeps describing the current public API surface — conventions a
+contributor follows today — while `docs/adr/` records the history of *why* those
+conventions exist. An accepted ADR's Decision and Consequences are not edited after
+the fact; a change of mind gets a new ADR that supersedes it.
 
 ## Consequences
 

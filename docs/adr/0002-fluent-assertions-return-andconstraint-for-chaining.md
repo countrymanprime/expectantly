@@ -1,7 +1,8 @@
 # 0002. Fluent assertion methods return `AndConstraint<TAssertion>` for chaining
 
-- Status: accepted
+- Status: Accepted
 - Date: 2026-09-18
+- Recorded retroactively on 2026-09-18. The convention was already in the code.
 
 ## Context
 
@@ -16,10 +17,16 @@ applied consistently in the code: every terminal check on `ObjectAssertions<TAct
 `IsFalse`, in `src/Expectantly/ObjectAssertions.cs`) returns
 `AndConstraint<ObjectAssertions<TActual>>` rather than `this`.
 
+## Considered options
+
+1. Return the assertion object (`this`) directly from each check.
+2. Return an `AndConstraint<TAssertion>` wrapper whose `And` property exposes the assertion
+   object.
+
 ## Decision
 
-We return `AndConstraint<TAssertion>` — a thin wrapper exposing the same assertion
-object via its `And` property (`AndConstraint<TSelf>` in
+We choose option 2. We return `AndConstraint<TAssertion>` — a thin wrapper exposing
+the same assertion object via its `And` property (`AndConstraint<TSelf>` in
 `src/Expectantly/AndConstraint.cs`, implementing `IAndConstraint<TSelf>` in
 `src/Expectantly/Abstractions/IAndConstraint.cs`) — from every terminal assertion
 method that continues checking the *same* assertion surface, instead of returning the

@@ -1,6 +1,6 @@
 # NNNN. <Title, stated as the decision, present tense>
 
-- Status: accepted
+- Status: Proposed | Accepted | Rejected | Deprecated | Superseded by <link to NNNN-slug.md>
 - Date: YYYY-MM-DD
 
 ## Context
@@ -8,6 +8,10 @@
 <What was actually observed — a bug, a user request, a constraint hit during
 implementation. Link to it if there's a source. 2-5 sentences; if it needs more,
 it's too long.>
+
+## Considered options
+
+<At least two real options, including keeping the status quo when that's viable.>
 
 ## Decision
 

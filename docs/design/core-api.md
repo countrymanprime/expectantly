@@ -1,7 +1,7 @@
 # Core API design notes
 
 > See also: [architecture](../architecture.md), [API reference](../api-reference.md), and
-> [known flaws and quick enhancements](../flaws-and-enhancements.md).
+> [architecture decision records](../adr/README.md).
 
 ## Naming conventions
 

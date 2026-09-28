@@ -10,7 +10,7 @@ files don't repeat the `using`.
 
 Tests mirror the source by feature, not by class-per-file:
 
-```
+```text
 tests/Expectantly.Tests/
 ├── Expect/
 │   └── ThatTests.cs                       # Expect.That(...) overloads
@@ -22,9 +22,13 @@ tests/Expectantly.Tests/
     └── ReferenceAndTypeAssertionsTests.cs # IsSameAs / IsAssignableTo
 ```
 
-Convention: one `[Fact]` per behavior, named `Method_ExpectedBehavior_WhenCondition` (e.g.
-`That_WithNullFactory_ThrowsArgumentNullException`), calling through `global::Expectantly.Expect`
-explicitly to avoid ambiguity with the `Expectantly.Tests.Expect` namespace.
+Conventions:
+
+- One `[Fact]` per behavior, named `Method_Condition_ExpectedResult`, for example
+  `IsNull_WhenValueIsNotNull_ThrowsInvalidOperationException` or
+  `That_WithNullFactory_ThrowsArgumentNullException`.
+- Tests call `global::Expectantly.Expect` explicitly, because inside the test project `Expect`
+  also names the `Expectantly.Tests.Expect` namespace.
 
 Run locally:
 
@@ -32,8 +36,8 @@ Run locally:
 dotnet test Expectantly.sln --configuration Release
 ```
 
-There is no coverage threshold enforced yet, though `coverlet.collector` is already referenced —
-see [`flaws-and-enhancements.md`](flaws-and-enhancements.md).
+`coverlet.collector` is referenced, but nothing collects coverage by default and no threshold is
+enforced. To collect it locally, add `--collect:"XPlat Code Coverage"`.
 
 ## CI pipeline
 
@@ -46,5 +50,5 @@ pull request targeting `main`:
 4. `dotnet build Expectantly.sln --no-restore --configuration Release`
 5. `dotnet test Expectantly.sln --no-build --configuration Release`
 
-Single job, single OS (`ubuntu-latest`), no coverage report, no artifact publishing, no NuGet pack
-step. See the flaws doc for what a more complete pipeline would add.
+It's a single job on a single OS (`ubuntu-latest`). It doesn't collect coverage, publish
+artifacts, or pack a NuGet package.
