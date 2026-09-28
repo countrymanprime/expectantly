@@ -5,36 +5,40 @@ public class NullAssertionsTests
     [Fact]
     public void IsNull_WhenValueIsNull_Passes()
     {
-        string? value = null;
+        string? name = null;
 
-        var chain = global::Expectantly.Expect.That(value).IsNull().And;
+        var chain = global::Expectantly.Expect.That(name).IsNull().And;
 
         Assert.Null(chain.Actual);
     }
 
     [Fact]
-    public void IsNull_WhenValueIsNotNull_ThrowsInvalidOperationException()
+    public void IsNull_WhenValueIsNotNull_ThrowsExpectationFailedException()
     {
-        var ex = Assert.Throws<InvalidOperationException>(() => global::Expectantly.Expect.That("value").IsNull());
+        var name = "x";
 
-        Assert.Contains("Expected <null> but found <value>", ex.Message);
+        var message = MessageOf(() => global::Expectantly.Expect.That(name).IsNull());
+
+        Assert.Equal("Expected name to be null, but found \"x\".", message);
     }
 
     [Fact]
-    public void IsNotNull_WhenValueIsNotNull_Passes()
+    public void IsNotNull_WhenValueIsNotNull_ReturnsTheValueAsWhich()
     {
-        var chain = global::Expectantly.Expect.That("value").IsNotNull().And;
+        var name = "x";
 
-        Assert.Equal("value", chain.Actual);
+        var which = global::Expectantly.Expect.That(name).IsNotNull().Which;
+
+        Assert.Same(name, which);
     }
 
     [Fact]
-    public void IsNotNull_WhenValueIsNull_ThrowsInvalidOperationException()
+    public void IsNotNull_WhenValueIsNull_ThrowsExpectationFailedException()
     {
-        string? value = null;
+        string? name = null;
 
-        var ex = Assert.Throws<InvalidOperationException>(() => global::Expectantly.Expect.That(value).IsNotNull());
+        var message = MessageOf(() => global::Expectantly.Expect.That(name).IsNotNull());
 
-        Assert.Contains("Expected a non-null value", ex.Message);
+        Assert.Equal("Expected name not to be null, but it was.", message);
     }
 }

@@ -11,25 +11,42 @@ public class ThatTests
     }
 
     [Fact]
-    public void That_WithFactory_EvaluatesFactoryOnce()
+    public void That_WithVariable_CapturesItsExpression()
     {
-        var calls = 0;
+        var answer = 42;
 
-        var assertion = global::Expectantly.Expect.That(() =>
-        {
-            calls++;
-            return "hello";
-        });
+        var assertion = global::Expectantly.Expect.That(answer);
 
-        Assert.Equal("hello", assertion.Actual);
-        Assert.Equal(1, calls);
+        Assert.Equal("answer", assertion.Expression);
     }
 
     [Fact]
-    public void That_WithNullFactory_ThrowsArgumentNullException()
+    public void That_WithMemberAccess_NamesTheSubjectByItsExpression()
     {
-        Func<string>? factory = null;
+        var order = new { Total = 42 };
 
-        Assert.Throws<ArgumentNullException>(() => global::Expectantly.Expect.That(factory!));
+        var message = MessageOf(() => global::Expectantly.Expect.That(order.Total).Is(43));
+
+        Assert.Equal("Expected order.Total to be 43, but found 42.", message);
+    }
+
+    [Fact]
+    public void That_WithLiteral_NamesTheSubjectValue()
+    {
+        var message = MessageOf(() => global::Expectantly.Expect.That(42).Is(43));
+
+        Assert.Equal("Expected value to be 43, but found 42.", message);
+    }
+
+    [Fact]
+    public void That_WithExpressionOverSeveralLines_NamesTheSubjectOnOneLine()
+    {
+        var order = new { Total = 42 };
+
+        var message = MessageOf(() => global::Expectantly.Expect.That(
+            order
+                .Total).Is(43));
+
+        Assert.Equal("Expected order.Total to be 43, but found 42.", message);
     }
 }

@@ -421,7 +421,7 @@ docs/
 
 ### Build settings
 
-- `Directory.Build.props`: `LangVersion latest`, `Nullable enable`, `TreatWarningsAsErrors`, `Deterministic`, `ContinuousIntegrationBuild` in CI, SourceLink, embedded untracked sources, `.snupkg` symbols, package readme and icon.
+- `Directory.Build.props`: `LangVersion latest`, `Nullable enable`, `TreatWarningsAsErrors`, `Deterministic`, `ContinuousIntegrationBuild` in CI, SourceLink, embedded untracked sources, symbols embedded in the `.nupkg` (GitHub Packages doesn't accept `.snupkg`), package readme and icon.
 - `Directory.Packages.props` for central package versions.
 - Source-only polyfills (for example PolySharp) supply `CallerArgumentExpression`, `DoesNotReturn` and `OverloadResolutionPriority` attributes on `netstandard2.0` without a runtime dependency.
 - `Microsoft.CodeAnalysis.PublicApiAnalyzers` and `EnablePackageValidation` on every shipping project.
@@ -430,7 +430,7 @@ docs/
 ### Testing strategy
 
 1. **Behaviour tests** for each assertion: passes, fails, null actual, null expected, and chaining.
-2. **Expected-message tests** for every failure path, using Verify (a test-only dependency). A message change shows up as a reviewable diff.
+2. **Expected-message tests** for every failure path, comparing the whole message with `Assert.Equal`. A message change shows up in the test diff. Verify is an option later if multi-line output (such as equivalency differences) makes inline strings unwieldy.
 3. **Property-based tests** (FsCheck) for the diff algorithms, for example "the reported index is the first differing character".
 4. **Binding-table tests** compiled on the minimum and latest SDK.
 5. **Analyzer tests** with `Microsoft.CodeAnalysis.Testing`, covering diagnostics and code fixes.
@@ -448,13 +448,13 @@ docs/
 | pack | Every PR | `dotnet pack`, package validation, public API check |
 | bench | Nightly on `main` | Benchmarks; fail on a regression over 10% |
 | mutation | Weekly | Stryker.NET report |
-| release | Tag `v*` | Pack, sign, publish to NuGet, create GitHub release from conventional commits |
+| release | Tag `v*` | Run the CI workflow, pack, publish previews to GitHub Packages (nuget.org from 1.0), create a GitHub release with generated notes. Signing is still open. |
 
 The existing workflow (`.github/workflows/ci.yml`, .NET 8 only, ubuntu only) is replaced in M0.
 
 ### Release policy
 
-- Pre-1.0: each milestone ships a `0.x` preview to NuGet. Breaking changes are allowed and listed in release notes.
+- Pre-1.0: each milestone ships a `0.x` preview to GitHub Packages. Breaking changes are allowed and listed in release notes.
 - 1.0 and later: semantic versioning enforced by package validation. Deprecations get `[Obsolete]` for one minor release before removal in the next major.
 - Commit messages keep the conventional-commit style already in use (`feat!:`, `fix:`, `docs:`).
 
@@ -474,20 +474,22 @@ M0 comes first because every later assertion is built on its failure pipeline an
 
 ### M0 Foundations
 
-- [ ] Add `Failure`, `IFailureStrategy` and `ExpectationFailedException`; route all existing assertions through them (CORE-1, CORE-2)
-- [ ] Add caller-expression capture; move `because` onto assertions and remove `becauseArgs` (CORE-3, CORE-4)
-- [ ] Remove the eager `That(Func<T>)` overload (CORE-5)
-- [ ] Add `AndWhichConstraint` (CORE-6)
-- [ ] Build the value formatter registry and sentence composer; rewrite existing messages (CORE-7)
-- [ ] Add `[StackTraceHidden]` (CORE-8)
-- [ ] Switch equality to `EqualityComparer<T>`; replace `IsSameAs` with `IsSameInstanceAs` (OBJ-1, OBJ-2)
-- [ ] Add Verify-based expected-message tests for every existing failure
-- [ ] Add `Directory.Build.props`, central packages, polyfills, SourceLink, public API tracking, package validation
-- [ ] Replace CI with the build-test, min-compiler and pack jobs; target `netstandard2.0`, `net8.0`, `net10.0`
+- [x] Add `Failure`, `IFailureStrategy` and `ExpectationFailedException`; route all existing assertions through them (CORE-1, CORE-2). `IFailureStrategy` stays internal until soft-assertion scopes need it.
+- [x] Add caller-expression capture; move `because` onto assertions and remove `becauseArgs` (CORE-3, CORE-4)
+- [x] Remove the eager `That(Func<T>)` overload (CORE-5)
+- [x] Add `AndWhichConstraint` (CORE-6)
+- [x] Build the value formatter and sentence composer; rewrite existing messages (CORE-7). The formatter isn't pluggable yet; custom formatters arrive with `Expect.Configure` (CORE-10).
+- [x] Add `[StackTraceHidden]` (CORE-8)
+- [x] Switch equality to `EqualityComparer<T>`; replace `IsSameAs` with `IsSameInstanceAs` (OBJ-1, OBJ-2)
+- [x] Add exact expected-message tests for every existing failure. One-sentence messages are short enough to assert whole with `Assert.Equal`, so Verify isn't needed.
+- [x] Add `Directory.Build.props`, central packages, polyfills, SourceLink, public API tracking, package validation
+- [x] Replace CI with the build-test (Linux and Windows) and pack jobs; target `netstandard2.0`, `net8.0`, `net10.0`
+- [ ] ~~min-compiler CI job~~ moved to M1: until the overload binding table exists, there is nothing compiler-specific to check.
 
 ### M1 Everyday assertions
 
 - [ ] Prototype the entry-point overload table and binding tests first; confirm `[OverloadResolutionPriority]` behaviour
+- [ ] Add the min-compiler CI job (moved from M0) to run the binding tests on the minimum supported SDK
 - [ ] Split `ObjectAssertions<T>` into type-specific surfaces (BOOL-1, OBJ-3 to OBJ-5)
 - [ ] Strings (STR-1 to STR-6), with `StringDiff`
 - [ ] Numbers and time (NUM-1 to NUM-3, TIME-1, TIME-2)
